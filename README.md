@@ -1,5 +1,5 @@
 # CSV to Binary
-Souce CSV: https://www.kaggle.com/taylornoren/nyc-yellow-cab-trip-data-201703
+Source CSV: https://www.kaggle.com/taylornoren/nyc-yellow-cab-trip-data-201703
 
 This C++ application converts a large CSV into binary format, and then processes the binary file to count the data it looks for.
 
