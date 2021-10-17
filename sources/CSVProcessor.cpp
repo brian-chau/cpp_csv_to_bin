@@ -1,4 +1,4 @@
-#include <regex>
+#include <vector>
 
 #include "CSVProcessor.h"
 
@@ -10,10 +10,10 @@ CSVProcessor::CSVProcessor(std::string input_csv)
 }
 
 CSVProcessor::~CSVProcessor() {
-    
 }
 
-std::time_t CSVProcessor::time_since_epoch(const std::string& str, bool is_dst, const std::string& format) {
+std::time_t CSVProcessor::time_since_epoch(const std::string& str, bool is_dst) {
+    const std::string& format = "%Y-%m-%d %H:%M:%S";
     std::tm t = {0};
     t.tm_isdst = is_dst ? 1 : 0;
     std::istringstream ss(str);
@@ -27,30 +27,36 @@ void CSVProcessor::generate_bin_file() {
     std::ofstream oss("out.bin", std::ios::binary | std::ios::out);
     std::string   line("");
 
-    Data data;
     if (iss.is_open()) {
-        std::regex pattern("([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+),([^,]+)");
-        std::smatch match;
-        for(int i=0; std::getline(iss, line); i++) {
-            if (i < 2)
-                continue;
-
-            memset(&data, 0, sizeof(Data));
-            if (std::regex_search(line, match, pattern)) {
-                data.record.VendorID               = atoi(match.str(1).c_str());
-                data.record.tpep_pickup_datetime   = time_since_epoch(match.str(2).c_str());
-                data.record.tpep_dropoff_datetime  = time_since_epoch(match.str(3).c_str());
-                data.record.passenger_count        = atoi(match.str(4).c_str());
-                data.record.trip_distance          = (U16) std::stof(match.str(5).c_str()) * 100;
-                data.record.RatecodeID             = atoi(match.str(6).c_str());
-                data.record.store_and_forward_flag = atoi(match.str(7).c_str());
-                data.record.PULocationID           = atoi(match.str(8).c_str());
-                data.record.DOLocationID           = atoi(match.str(9).c_str());
-                data.record.payment_type           = atoi(match.str(10).c_str());
+        // Skip the first two lines
+        std::getline(iss, line);
+        std::getline(iss, line);
+        std::string       token;
+        Data data;
+        for (int i=0; std::getline(iss, line); i++) {
+            memset(&data, 0, RECORD_SIZE);
+            char * line_char = (char*) line.c_str();
+            char * token     = std::strtok(line_char, ",");
+            for(int j=0; token && j <= PAYMENT_TYPE; j++) {
+                switch(j) {
+                    case VENDOR_ID:          data.record.VendorID               = atoi(token);                  break;
+                    //case PU_TIME:            data.record.tpep_pickup_datetime   = time_since_epoch(token);      break; // TODO: Find out why this takes so long?
+                    //case DO_TIME:            data.record.tpep_dropoff_datetime  = time_since_epoch(token);      break;
+                    case PASSENGER_COUNT:    data.record.passenger_count        = atoi(token);                  break;
+                    case TRIP_DISTANCE:      data.record.trip_distance          = (U16) std::stof(token) * 100; break;
+                    case RATE_CODE:          data.record.RatecodeID             = atoi(token);                  break;
+                    case STORE_AND_FWD_FLAG: data.record.store_and_forward_flag = atoi(token);                  break;
+                    case PU_LOCATION:        data.record.PULocationID           = atoi(token);                  break;
+                    case DO_LOCATION:        data.record.DOLocationID           = atoi(token);                  break;
+                    case PAYMENT_TYPE:       data.record.payment_type           = atoi(token);                  break;
+                }
+                token = std::strtok(NULL, ",");
             }
-            oss.write((const char *)&data.buffer, RECORD_SIZE);
+            oss.write((const char*)&data.buffer, RECORD_SIZE);
         }
+        iss.close();
+    } else {
+        std::cout << "Cannot open file" << std::endl;
     }
-    iss.close();
     oss.close();
 }

@@ -5,8 +5,9 @@
 
 int main(int argc, char** argv) {
     if (argc != 3) {
-        std::cout << "Usage: " << std::endl << "    ./the_executable_file file.csv convert" << std::endl;
-        std::cout << "    ./the_executable_file file.bin count" << std::endl;
+        std::cout << "Usage: " << std::endl;
+        std::cout << "    ./" << argv[0] << " file.csv convert" << std::endl;
+        std::cout << "    ./" << argv[0] << " file.bin count" << std::endl;
         return -1;
     }
 

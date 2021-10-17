@@ -79,8 +79,8 @@ void BinProcessor::count_conditions(){
         pthread_join(threads[j], NULL);
     }
 
-    std::cout << m_pu_total << std::endl;
-    std::cout << m_do_total << std::endl;
+    std::cout << "PU Count: " << m_pu_total << std::endl;
+    std::cout << "DO Count: " << m_do_total << std::endl;
 
     pthread_exit(NULL);
 }
