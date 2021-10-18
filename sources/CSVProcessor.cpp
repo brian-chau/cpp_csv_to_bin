@@ -64,7 +64,7 @@ void CSVProcessor::generate_bin_file() {
             for(int j=0; token && j <= PAYMENT_TYPE; j++) {
                 switch(j) {
                     case VENDOR_ID:          data.record.VendorID               = atoi(token);                  break;
-                    case PU_TIME:            data.record.tpep_pickup_datetime   = time_since_epoch(token);      break; // TODO: Find out why this takes so long?
+                    case PU_TIME:            data.record.tpep_pickup_datetime   = time_since_epoch(token);      break;
                     case DO_TIME:            data.record.tpep_dropoff_datetime  = time_since_epoch(token);      break;
                     case PASSENGER_COUNT:    data.record.passenger_count        = atoi(token);                  break;
                     case TRIP_DISTANCE:      data.record.trip_distance          = (U16) std::stof(token) * 100; break;
