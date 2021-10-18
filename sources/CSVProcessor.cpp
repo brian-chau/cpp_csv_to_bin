@@ -14,7 +14,7 @@ CSVProcessor::~CSVProcessor() {
 
 S64 CSVProcessor::time_since_epoch(const std::string& str) {
     std::string format("%d-%d-%d %d:%d:%d");
-    std::tm t = {0};
+    std::tm     t = {0};
     sscanf(str.c_str(), format.c_str(), &t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec);
 
     // Note: Could have used mktime here, but with such a large file, it would have been taken 2m30s or longer for 800MB
@@ -31,8 +31,9 @@ S64 CSVProcessor::time_since_epoch(const std::string& str) {
     result += (year - 1968) / 4;
     result -= (year - 1900) / 100;
     result += (year - 1600) / 400;
-    if ((year % 4) == 0 && ((year % 100) != 0 || (year % 400) == 0) && (t.tm_mon % MONTHSPERYEAR) < 2)
+    if ((year % 4) == 0 && ((year % 100) != 0 || (year % 400) == 0) && (t.tm_mon % MONTHSPERYEAR) < 2) {
         result--;
+    }
     result += t.tm_mday - 1;
     result *= 24;
     result += t.tm_hour;
@@ -40,9 +41,9 @@ S64 CSVProcessor::time_since_epoch(const std::string& str) {
     result += t.tm_min;
     result *= 60;
     result += t.tm_sec;
-    if (t.tm_isdst == 1)
+    if (t.tm_isdst == 1) {
         result -= 3600;
-
+    }
     return (result);
 }
 

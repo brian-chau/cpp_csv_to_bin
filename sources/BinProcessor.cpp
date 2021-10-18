@@ -32,9 +32,9 @@ void BinProcessor::StoreResults(int pu_count, int do_count) {
 }
 
 static void * ReadFile(void * param) {
-    threadParam *params = (threadParam*) param;
+    threadParam  *params = (threadParam*) param;
 
-    std::string line;
+    std::string   line;
     std::ifstream file(params->t_filename);
 
     if (file.is_open()) {
@@ -49,10 +49,11 @@ static void * ReadFile(void * param) {
             memset(&data, 0, RECORD_SIZE);
             file.read((char*)data.buffer, RECORD_SIZE);
             if (data.record.payment_type == 3) {
-                if (data.record.PULocationID == 170)
+                if (data.record.PULocationID == 170) {
                     pu_count++;
-                else if (data.record.DOLocationID == 170)
+                } else if (data.record.DOLocationID == 170) {
                     do_count++;
+                }
             }
         }
         itsBinProc->StoreResults(pu_count, do_count);
