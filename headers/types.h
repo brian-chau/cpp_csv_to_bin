@@ -11,8 +11,8 @@
 #define S64 signed long int
 
 typedef struct Record {
-    U64 tpep_pickup_datetime;  // Words 1-4
-    U64 tpep_dropoff_datetime; // Words 5-8
+    S64 tpep_pickup_datetime;  // Words 1-4
+    S64 tpep_dropoff_datetime; // Words 5-8
     #pragma pack(1)
     struct {                    // Word 9
         U16 passenger_count        : 4;

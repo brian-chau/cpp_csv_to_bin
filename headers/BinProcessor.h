@@ -12,7 +12,7 @@
 
 #include "types.h"
 
-#define MAX_THREADS 2
+#define MAX_THREADS 1
 
 class BinProcessor {
 public:

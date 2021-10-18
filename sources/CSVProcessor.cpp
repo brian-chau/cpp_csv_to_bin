@@ -12,14 +12,38 @@ CSVProcessor::CSVProcessor(std::string input_csv)
 CSVProcessor::~CSVProcessor() {
 }
 
-std::time_t CSVProcessor::time_since_epoch(const std::string& str, bool is_dst) {
-    const std::string& format = "%Y-%m-%d %H:%M:%S";
+S64 CSVProcessor::time_since_epoch(const std::string& str) {
+    std::string format("%d-%d-%d %d:%d:%d");
     std::tm t = {0};
-    t.tm_isdst = is_dst ? 1 : 0;
-    std::istringstream ss(str);
-    ss >> std::get_time(&t, format.c_str());
+    sscanf(str.c_str(), format.c_str(), &t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec);
 
-    return mktime(&t);
+    // Note: Could have used mktime here, but with such a large file, it would have been taken 2m30s or longer for 800MB
+    //       As an alternative, I found this code snippet somewhere online that supposedly does the same thing,
+    //         which reduces the runtime down to ~9s
+    //return mktime(&t);
+    S64         year;
+    std::time_t result;
+    #define MONTHSPERYEAR   12      /* months per calendar year */
+    static const int cumdays[MONTHSPERYEAR] = { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334 };
+
+    year    = 1900 + t.tm_year + t.tm_mon / MONTHSPERYEAR;
+    result  = (year - 1970) * 365 + cumdays[t.tm_mon % MONTHSPERYEAR];
+    result += (year - 1968) / 4;
+    result -= (year - 1900) / 100;
+    result += (year - 1600) / 400;
+    if ((year % 4) == 0 && ((year % 100) != 0 || (year % 400) == 0) && (t.tm_mon % MONTHSPERYEAR) < 2)
+        result--;
+    result += t.tm_mday - 1;
+    result *= 24;
+    result += t.tm_hour;
+    result *= 60;
+    result += t.tm_min;
+    result *= 60;
+    result += t.tm_sec;
+    if (t.tm_isdst == 1)
+        result -= 3600;
+
+    return (result);
 }
 
 void CSVProcessor::generate_bin_file() {
@@ -40,8 +64,8 @@ void CSVProcessor::generate_bin_file() {
             for(int j=0; token && j <= PAYMENT_TYPE; j++) {
                 switch(j) {
                     case VENDOR_ID:          data.record.VendorID               = atoi(token);                  break;
-                    //case PU_TIME:            data.record.tpep_pickup_datetime   = time_since_epoch(token);      break; // TODO: Find out why this takes so long?
-                    //case DO_TIME:            data.record.tpep_dropoff_datetime  = time_since_epoch(token);      break;
+                    case PU_TIME:            data.record.tpep_pickup_datetime   = time_since_epoch(token);      break; // TODO: Find out why this takes so long?
+                    case DO_TIME:            data.record.tpep_dropoff_datetime  = time_since_epoch(token);      break;
                     case PASSENGER_COUNT:    data.record.passenger_count        = atoi(token);                  break;
                     case TRIP_DISTANCE:      data.record.trip_distance          = (U16) std::stof(token) * 100; break;
                     case RATE_CODE:          data.record.RatecodeID             = atoi(token);                  break;

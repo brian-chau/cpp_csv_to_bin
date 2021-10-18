@@ -19,6 +19,9 @@ public:
     void generate_bin_file();
 
 private:
-    std::time_t time_since_epoch(const std::string& str, bool is_dst = false);
+    // Private Methods
+    std::time_t time_since_epoch(const std::string& str);
+
+    // Private Members
     std::string m_input_csv;
 };
