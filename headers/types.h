@@ -19,6 +19,7 @@ typedef struct Record {
         U16 VendorID               : 1;
         U16 store_and_forward_flag : 1;
         U16 payment_type           : 2;
+        U16 spare1                 : 8;
     };
     #pragma pack()
     #pragma pack(1)
@@ -30,7 +31,7 @@ typedef struct Record {
     #pragma pack(1)
     struct {                    // Word 11
         U16 DOLocationID : 9;
-        U16 spare        : 7;
+        U16 spare2       : 7;
     };
     #pragma pack()
     U16 trip_distance;          // Word 12 Resolution: 0.01
