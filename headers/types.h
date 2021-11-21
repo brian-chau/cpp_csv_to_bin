@@ -2,13 +2,13 @@
 
 #define U8  unsigned char
 #define U16 unsigned short
-#define U32 unsigned int
-#define U64 unsigned long int
+#define U32 unsigned long int
+#define U64 unsigned long long int
 
 #define S8  signed char
 #define S16 signed short
-#define S32 signed int
-#define S64 signed long int
+#define S32 signed long int
+#define S64 signed long long int
 
 typedef struct Record {
     S64 tpep_pickup_datetime;  // Words 1-4

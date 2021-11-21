@@ -12,7 +12,7 @@ CSVProcessor::CSVProcessor(std::string input_csv)
 CSVProcessor::~CSVProcessor() {
 }
 
-S64 CSVProcessor::time_since_epoch(const std::string& str) {
+std::time_t CSVProcessor::time_since_epoch(const std::string& str) {
     std::string format("%d-%d-%d %d:%d:%d");
     std::tm     t = {0};
     sscanf(str.c_str(), format.c_str(), &t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec);
